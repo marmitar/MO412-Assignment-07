@@ -1,0 +1,102 @@
+\def\homeworkname{Largest Hub}
+\documentclass[assignment = 7]{homework}
+
+\usepackage{caption, subcaption, pdfpages, float}
+\usepackage{graphics, wrapfig, pgf, graphicx}
+\usepackage{enumitem}
+
+
+% pacotes para importar código
+\usepackage{caption, booktabs}
+\usepackage[inkscapepath=build/inkscape]{svg}
+\usepackage[section, newfloat, outputdir=build/]{minted}
+\definecolor{sepia}{RGB}{252,246,226}
+\setminted{
+    bgcolor = sepia,
+    style   = pastie,
+    frame   = leftline,
+    autogobble,
+    samepage,
+    python3,
+    breaklines
+}
+\setmintedinline{
+    bgcolor={}
+}
+
+% ambientes de códigos de Python
+\newmintedfile[pyinclude]{python3}{}
+\newmintinline[pyline]{python3}{}
+\newcommand{\pyref}[2]{\href{#1}{\texttt{#2}}}
+
+% \SetupFloatingEnvironment{listing}{name=Código}
+% \captionsetup[listing]{position=below,skip=-1pt}
+
+\usepackage{csquotes}
+\usepackage[
+    style    = verbose-ibid,
+    autocite = footnote,
+    notetype = foot+end,
+    backend  = biber
+]{biblatex}
+\addbibresource{references.bib}
+\usepackage[section]{placeins}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[noabbrev, nameinlink]{cleveref}
+\hypersetup{
+    pdftitle  = {MO412/MC908 - RA187679},
+    pdfauthor = {Tiago de Paula}
+}
+
+\newcommand{\textref}[2]{
+    \hyperref[#2]{#1 \ref*{#2}}
+}
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+\DeclareMathOperator{\round}{round}
+
+\usepackage{import, multirow}
+\usepackage{pgf, tikz}
+\usetikzlibrary{matrix}
+\usetikzlibrary{positioning}
+\usetikzlibrary{automata}
+\usetikzlibrary{shapes}
+
+\usepackage{wrapfig}
+\usepackage{booktabs}
+\input{simbolos}
+
+\newenvironment{kmatrix}[1][1.3cm]{
+    \begin{tikzpicture}[node distance=0cm]
+        \tikzset{square matrix/.style={
+                matrix of nodes,
+                column sep=-\pgflinewidth, row sep=-\pgflinewidth,
+                nodes={draw,
+                    minimum height=#1,
+                    anchor=center,
+                    text width=#1,
+                    align=center,
+                    inner sep=0pt
+                },
+            },
+            square matrix/.default=#1
+        }
+}{
+    \end{tikzpicture}%
+}
+
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}%
+
+\newcommand{\red}[1]{\textcolor{red}{\textbf{#1}}}
+\def\qm{?}
+
+\begin{document}
+    \pagestyle{main}
+
+    Calculate the expected maximum degree for the undirected networks listed in \href{http://networksciencebook.com/chapter/4#scale-free}{Table 4.1 of Barabasi's book `Network Science'}, except Power Grid.  Assume ($k_{\min}$) is 1 for all networks.  Explain your reasoning.
+
+    \input{texts/solution}
+
+\end{document}
