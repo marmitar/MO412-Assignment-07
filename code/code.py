@@ -33,12 +33,14 @@ def read(path: str = os.path.join(DIRECTORY, 'chapter4.html')):
     return df.dropna()
 
 def save(table: pd.DataFrame, path: str = os.path.join(PARENT, 'texts/table.tex')):
+    columns = 'c' * len(table.columns)
+
     content: str = (
         table.style
             .hide()
             .format_index(escape='latex')
             .format(escape='latex', precision=2)
-            .to_latex(hrules=True)
+            .to_latex(hrules=True, column_format=columns)
     )
     for rule in ('bottomrule', 'toprule'):
         content = content.replace(f'\\{rule}', f'\\{rule}\\{rule}')
