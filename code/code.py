@@ -59,7 +59,7 @@ def kmax_solver(gamma: float, N: int, kmin: int = 1):
         [diff] = (zeta(gamma, kmax) / zg) - 1/N
         return abs(diff)
 
-    res = minimize(fun, x0=[N], method='Nelder-Mead', tol=1e-6)
+    res = minimize(fun, x0=[N/2], method='Nelder-Mead', tol=1e-6)
     if not res.success:
         raise ValueError(res.message)
 
