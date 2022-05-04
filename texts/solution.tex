@@ -1,8 +1,31 @@
-\section{?}
+\section{Maximum Degree}
 
+    Following the \textit{Continuum Formalism}, the minimum degree is given by
     \[
-        k_{\max} = k_{\min} N^{\frac{1}{\gamma-1}}
+        k_{\max} = k_{\min} \cdot N^{\frac{1}{\gamma - 1}}
     \]
+
+\subsection{Discrete Formalism}
+
+    We can also consider the \textit{Discrete Formalism}, which is described by
+    \[
+        P(\mathbf{k} = k) = \frac{k^{-\gamma}}{\sum_{q = k_{\min}}^\infty q^{-\gamma}} = \frac{k^{-\gamma}}{\zeta(\gamma, k_{\min})}
+    \]
+
+    Where $\zeta$ is the \href{https://en.wikipedia.org/wiki/Hurwitz_zeta_function}{Hurwitz zeta} function. From the definition, $k_{\max}$ is the first value such that $P(\mathbf{k} \geq k_{\max}) \leq \frac{1}{N}$, but
+    \begin{align*}
+        P(\mathbf{k} \geq k_{\max})
+        &= \sum_{k = k_{\max}}^\infty P(\mathbf{k} = k) \\
+        &= \frac{1}{\zeta(\gamma, k_{\min})} \sum_{k = k_{\max}}^\infty k^{-\gamma} \\
+        &= \frac{\zeta(\gamma, k_{\max})}{\zeta(\gamma, k_{\min})}
+    \end{align*}
+
+    So $k_{\max}$ is found as the smallest integer such that
+    \[
+        \frac{\zeta(\gamma, k_{\max})}{\zeta(\gamma, k_{\min})} \leq \frac{1}{N}
+    \]
+
+    Since the graph is simple, $k_{\max} < N$, then we can use the Bisection Method with range $[1, N]$ to find the solution numerically.
 
 \section{Results}
 
@@ -10,6 +33,6 @@
         \centering
         \input{texts/table}
 
-        \caption{\red{W}?}
+        \caption{$k_{\max}$ for the Scale-Free networks on Table 4.1, using the Continuum and Discrete Formalisms.}
         \label{tab:results}
     \end{table}

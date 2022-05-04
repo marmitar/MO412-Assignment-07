@@ -1,6 +1,9 @@
-from math import nan
+from math import floor, gamma, nan
+from typing import Sequence
 import os.path
 import pandas as pd
+from scipy.optimize import minimize
+from scipy.special import zeta
 
 
 DIRECTORY = os.path.dirname(__file__)
@@ -13,6 +16,7 @@ def parse(text: str):
         return nan
 
 
+NUM = '$N$'
 GAMMA_IN = '$\\gamma_\\text{in}$'
 GAMMA_OUT = '$\\gamma_\\text{out}$'
 
@@ -27,7 +31,7 @@ def read(path: str = os.path.join(DIRECTORY, 'chapter4.html')):
     g_out[g_out.isna()] = gamma[g_out.isna()]
 
     df = table[['Network']].copy()
-    df['$N$'] = table['N'].map(int)
+    df[NUM] = table['N'].map(int)
     df[GAMMA_IN] = g_in
     df[GAMMA_OUT] = g_out
     return df.dropna()
@@ -49,12 +53,34 @@ def save(table: pd.DataFrame, path: str = os.path.join(PARENT, 'texts/table.tex'
         file.write(content)
 
 
-def kmax(gamma: float, N: int, kmin: int = 1):
-    return kmin * (N ** (1 / (gamma - 1)))
+def kmax_solver(gamma: float, N: int, kmin: int = 1):
+    zg = zeta(gamma, kmin)
+    def fun(kmax: float):
+        [diff] = (zeta(gamma, kmax) / zg) - 1/N
+        return abs(diff)
+
+    res = minimize(fun, x0=[N], method='Nelder-Mead', tol=1e-6)
+    if not res.success:
+        raise ValueError(res.message)
+
+    kmax = floor(res.x[0])
+    while zeta(gamma, kmax) > 1/N:
+        kmax += 1
+
+    print(f"kmax({gamma=:5}, {N=:6}, {kmin=}) = {kmax:6}")
+    return kmax
+
+def kmax(gamma: pd.Series, N: pd.Series, *, continuous: bool, kmin: int = 1):
+    if continuous:
+        return kmin * N**(1 / (gamma - 1))
+    else:
+        return [kmax_solver(g, n, kmin) for g, n in zip(gamma, N)]
 
 
 if __name__ == '__main__':
     table = read()
-    table['${k_{\\max}}_\\text{in}$'] = kmax(table[GAMMA_IN], table['$N$'])
-    table['${k_{\\max}}_\\text{out}$'] = kmax(table[GAMMA_OUT], table['$N$'])
+    table['${k_{\\max}}_\\text{in}$ C'] = kmax(table[GAMMA_IN], table[NUM], continuous=True)
+    table['${k_{\\max}}_\\text{out}$ C'] = kmax(table[GAMMA_OUT], table[NUM], continuous=True)
+    table['${k_{\\max}}_\\text{in}$ D'] = kmax(table[GAMMA_IN], table[NUM], continuous=False)
+    table['${k_{\\max}}_\\text{out}$ D'] = kmax(table[GAMMA_OUT], table[NUM], continuous=False)
     save(table)
